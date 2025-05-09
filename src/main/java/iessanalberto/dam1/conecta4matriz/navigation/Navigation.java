@@ -10,7 +10,7 @@ public class Navigation {
         switch (destination) {
             case "MainScreen" -> {
                 MainScreen mainScreen = new MainScreen();
-                Scene mainScene = new Scene(mainScreen.getRoot(),560,420);
+                Scene mainScene = new Scene(mainScreen.getRoot(),480,480);
                 stage.setTitle("Conecta 4");
                 stage.setScene(mainScene);
                 stage.show();
