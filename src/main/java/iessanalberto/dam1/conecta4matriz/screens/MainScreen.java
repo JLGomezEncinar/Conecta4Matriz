@@ -7,15 +7,20 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
 public class MainScreen {
-    private HBox root = new HBox();
+    private VBox root = new VBox();
+    private HBox fila1 = new HBox();
+    private Label lbljugador1 = new Label("Jugador 1");
+    private Label lbljugador2 = new Label("Jugador 2");
     GridPane gridPane = new GridPane();
 
     private Button[][] casillas = new Button [6][7];
@@ -36,8 +41,8 @@ public class MainScreen {
                 casilla.setMinSize(60,60);
                 casilla.setMaxSize(60,60);
                 casillas[finalFila][finalColumna] =casilla;
-
-                casilla.setDisable(true);
+                //casilla.setDisable(true);
+                casilla.setStyle("-fx-background-color: white;");
 
 
                 gridPane.add(casilla,finalColumna,finalFila+1);
@@ -53,7 +58,7 @@ public class MainScreen {
                     btnfilas.add(casillas[fila][columna]);
                 }
 
-                Optional<Button> btnVacio = btnfilas.stream().filter(b ->b.getStyle().isEmpty()).findFirst();
+                Optional<Button> btnVacio = btnfilas.stream().filter(b ->b.getStyle().contains("-fx-background-color: white;")).findFirst();
                         btnVacio.ifPresent(b -> {
                                     b.setStyle(jugador1.isTurno() ? jugador1.getColor() : jugador2.getColor());
                                     int filaReal = -1;
@@ -75,14 +80,24 @@ public class MainScreen {
                                             mostrarAlerta(jugador1.isTurno() ? "Ha ganado el jugador 1" : "Ha ganado el jugador 2");
                                         }
                                     }
+
+                            jugador1.setTurno(!jugador1.isTurno());
+                            jugador2.setTurno(!jugador2.isTurno());
+                            if (jugador1.isTurno()){
+                                lbljugador1.setStyle("-fx-background-color: red");
+                                lbljugador2.setStyle("");
+                            } else {
+                                lbljugador2.setStyle("-fx-background-color: yellow");
+                                lbljugador1.setStyle("");
+                            }
+                            turno++;
                                 });
-                jugador1.setTurno(!jugador1.isTurno());
-                jugador2.setTurno(!jugador2.isTurno());
-                turno++;
+
             });
             gridPane.add(boton,botones,0);
         }
-        root.getChildren().addAll(gridPane);
+        fila1.getChildren().addAll(lbljugador1,lbljugador2);
+        root.getChildren().addAll(fila1,gridPane);
         configurarLayout();
     }
 
@@ -104,7 +119,7 @@ public class MainScreen {
     private boolean hay4EnLinea(int fila, int columna, int dx, int dy, Button[][] casillas) {
         String colorCasilla = casillas[fila][columna].getStyle();
 
-        if (colorCasilla.isEmpty()) {
+        if (colorCasilla.contains("-fx-background-color: white;")) {
             return false;
         }
 
@@ -144,13 +159,14 @@ public class MainScreen {
 
 
     private void configurarLayout() {
+        lbljugador1.setStyle("-fx-background-color: red");
         root.setSpacing(10);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(10));
-        root.setStyle("-fx-background-color: blue;");
+        gridPane.setStyle("-fx-background-color: blue;");
     }
 
-    public HBox getRoot() {
+    public VBox getRoot() {
         return root;
     }
 }
